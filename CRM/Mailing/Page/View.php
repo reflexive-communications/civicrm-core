@@ -94,7 +94,7 @@ class CRM_Mailing_Page_View extends CRM_Core_Page {
     if (Civi::settings()->get('hash_mailing_url')) {
       $this->_mailing = new CRM_Mailing_BAO_Mailing();
 
-      if (!is_numeric($this->_mailingID)) {
+      if (!CRM_Utils_Rule::integer($this->_mailingID)) {
 
         //lets get the id from the hash
         $result_id = civicrm_api3('Mailing', 'get', [
@@ -104,7 +104,7 @@ class CRM_Mailing_Page_View extends CRM_Core_Page {
         $this->_mailing->hash = $this->_mailingID;
         $this->_mailingID     = $result_id['id'];
       }
-      elseif (is_numeric($this->_mailingID)) {
+      else {
         $this->_mailing->id = $this->_mailingID;
         // if mailing is present and associated hash is present
         // while 'hash' is not been used for mailing view : throw 'permissionDenied'
