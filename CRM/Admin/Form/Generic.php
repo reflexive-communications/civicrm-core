@@ -56,8 +56,7 @@ class CRM_Admin_Form_Generic extends CRM_Core_Form {
   public function buildQuickForm() {
     $this->addFieldsDefinedInSettingsMetadata();
 
-    // @todo - do we still like this redirect?
-    CRM_Core_Session::singleton()->pushUserContext(CRM_Utils_System::url('civicrm/admin', 'reset=1'));
+    CRM_Core_Session::singleton()->pushUserContext($this->controller->get('entryURL'));
     $this->addButtons([
       [
         'type' => 'next',
