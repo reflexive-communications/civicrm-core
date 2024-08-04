@@ -130,7 +130,7 @@ class CRM_Core_Lock implements \Civi\Core\Lock\LockInterface {
     // MySQL 5.7 doesn't like long lock names so creating a lock id
     $this->_id = sha1($this->_name);
     if (defined('CIVICRM_LOCK_DEBUG')) {
-      \Civi::log()->debug('trying to construct lock for ' . $this->_name . '(' . $this->_id . ')');
+      CRM_Core_Error::debug_log_message('trying to construct lock for ' . $this->_name . '(' . $this->_id . ')');
     }
     $this->_timeout = $timeout !== NULL ? $timeout : self::TIMEOUT;
   }
@@ -180,7 +180,7 @@ class CRM_Core_Lock implements \Civi\Core\Lock\LockInterface {
       $res = CRM_Core_DAO::singleValueQuery($query, $params);
       if ($res) {
         if (defined('CIVICRM_LOCK_DEBUG')) {
-          \Civi::log()->debug('acquire lock for ' . $this->_name . '(' . $this->_id . ')');
+          CRM_Core_Error::debug_log_message('acquire lock for ' . $this->_name . '(' . $this->_id . ')');
         }
         $this->_hasLock = TRUE;
         if (stristr($this->_name, 'data.mailing.job.')) {
@@ -189,7 +189,7 @@ class CRM_Core_Lock implements \Civi\Core\Lock\LockInterface {
       }
       else {
         if (defined('CIVICRM_LOCK_DEBUG')) {
-          \Civi::log()->debug('failed to acquire lock for ' . $this->_name . '(' . $this->_id . ')');
+          CRM_Core_Error::debug_log_message('failed to acquire lock for ' . $this->_name . '(' . $this->_id . ')');
         }
       }
     }
@@ -202,7 +202,7 @@ class CRM_Core_Lock implements \Civi\Core\Lock\LockInterface {
   public function release() {
     if ($this->_hasLock) {
       if (defined('CIVICRM_LOCK_DEBUG')) {
-        \Civi::log()->debug('release lock for ' . $this->_name . '(' . $this->_id . ')');
+        CRM_Core_Error::debug_log_message('release lock for ' . $this->_name . '(' . $this->_id . ')');
       }
       $this->_hasLock = FALSE;
 
