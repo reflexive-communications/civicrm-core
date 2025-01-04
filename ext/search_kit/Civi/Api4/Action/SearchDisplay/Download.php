@@ -121,16 +121,16 @@ class Download extends AbstractRunAction {
    * {@inheritDoc}
    */
   protected function formatViewValue($key, $rawValue, $data, $dataType) {
-    if (is_array($rawValue)) {
-      return parent::formatViewValue($key, $rawValue, $data, $dataType);
-    }
+    $replace_chars = function ($value) {
+      // Replace non-breaking space (U+00A0) with normal space
+      return str_replace("\u{00A0}", ' ', $value);
+    };
 
     if (($dataType === 'Date' || $dataType === 'Timestamp') && in_array($this->format, ['csv', 'xlsx', 'ods'])) {
       return $rawValue;
     }
-    else {
-      return parent::formatViewValue($key, $rawValue, $data, $dataType);
-    }
+
+    return $replace_chars(parent::formatViewValue($key, $rawValue, $data, $dataType));
   }
 
   /**
