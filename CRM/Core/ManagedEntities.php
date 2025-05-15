@@ -309,7 +309,20 @@ class CRM_Core_ManagedEntities {
       // 'match' param doesn't apply to "update" action
       unset($params['match']);
       try {
-        civicrm_api4($item['entity_type'], 'update', $params);
+        $keys=array_keys($params['values']);
+        $current = civicrm_api4($item['entity_type'], 'get', [
+          'select' => $keys,
+          'where' => [[$idField, '=', $item['entity_id']]],
+          'limit' => 1,
+          'checkPermissions' => false,
+        ])->first();
+
+        foreach ($params['values'] as $key => $value) {
+          if (($current[$key]??null) != $value) {
+            civicrm_api4($item['entity_type'], 'update', $params);
+            break;
+          }
+        }
       }
       catch (CRM_Core_Exception $e) {
         $this->onApiError($item['module'], $item['name'], 'update', $e->getMessage(), $e);
