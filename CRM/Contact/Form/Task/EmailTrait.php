@@ -239,7 +239,11 @@ trait CRM_Contact_Form_Task_EmailTrait {
 
     $this->add('text', 'subject', ts('Subject'), ['size' => 50, 'maxlength' => 254], TRUE);
 
-    $this->add('select', 'from_email_address', ts('From'), $this->getFromEmails(), TRUE, ['class' => 'crm-select2 huge']);
+    $from_emails = array_combine(
+      array_map(fn($key) => str_replace(['<', '>'], ['&lt;', '&gt;'], $key), array_keys($this->getFromEmails())),
+      $this->getFromEmails()
+    );
+    $this->add('select', 'from_email_address', ts('From'), $from_emails, true, ['class' => 'crm-select2 huge']);
 
     CRM_Mailing_BAO_Mailing::commonCompose($this);
 
@@ -319,7 +323,10 @@ trait CRM_Contact_Form_Task_EmailTrait {
       $defaults = CRM_Core_BAO_Email::getEmailSignatureDefaults($emailID);
     }
     if (!Civi::settings()->get('allow_mail_from_logged_in_contact')) {
-      $defaults['from_email_address'] = CRM_Core_BAO_Domain::getFromEmail();
+      $from_email = CRM_Core_BAO_Domain::getFromEmail();
+      $from_email = str_replace('<', '&lt;', $from_email);
+      $from_email = str_replace('>', '&gt;', $from_email);
+      $defaults['from_email_address'] = $from_email;
     }
     return $defaults;
   }
